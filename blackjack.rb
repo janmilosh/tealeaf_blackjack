@@ -9,7 +9,7 @@ def create_deck
   card_values = [11, 10, 10, 10, 10, 9, 8, 7, 6, 5, 4, 3, 2]
   4.times do # to create 4 decks
     4.times do |j| # to create the 4 suites
-      13.times do |k|
+      13.times do |k| # to create the 13 values/ranks
         deck.push([card_values[k], card_ranks[k], suites[j]])
       end
     end
@@ -30,7 +30,7 @@ def keep_playing
 end
 
 def hit(hand, deck)
-  hand.push(deck.slice!(1))
+  hand.push(deck.slice!(0))
 end
 
 def hit_or_stay(hand, deck)
@@ -83,16 +83,26 @@ def total_for_hand(hand)
   total
 end
 
-def declare_winner(totals_array, player_name)
-  if totals_array[1] > 21
-    puts "Dealer busts, #{player_name} wins!!!"
+def declare_winner(totals_array, player_name, total_wins)
+  if totals_array[0] > 21
+    total_wins[1] += 1
+    message = "#{player_name} busts, Dealer wins!!!"
+  elsif totals_array[1] > 21
+    total_wins[0] += 1
+    message =  "Dealer busts, #{player_name} wins!!!"
   elsif totals_array[0] > totals_array[1]
-    puts "#{player_name} wins!!!"
+    message = "#{player_name} wins!!!"
+    total_wins[0] += 1
   elsif totals_array[1] > totals_array[0]
-    puts "Dealer wins!!!"
+    message = "Dealer wins!!!"
+    total_wins[1] += 1
   else
-    puts "It's a tie!!!"
+    message = "It's a tie!!!"
   end
+
+  puts message
+  puts "\nTotal wins: #{player_name} => #{total_wins[0]}  Dealer => #{total_wins[1]}"
+  
 end
 
 def display_player_hand(hand, player_name) #displays and returns total
@@ -132,6 +142,7 @@ def display_hands(hands, player_name, hole_card_hidden)
 end
 
 deck = []
+total_wins = [0, 0]
 player_name = get_player_name
 
 begin
@@ -145,22 +156,16 @@ begin
   begin # player's turn
     hit_or_stay = hit_or_stay(hands[0], deck)
     totals_array = display_hands(hands, player_name, true)
-  end while hit_or_stay == 'h' && totals_array[0] <= 21
-  
-  if totals_array[0] > 21
-    totals_array = display_hands(hands, player_name, false)
-    puts "You're busted. Dealer wins!!!"
+  end while hit_or_stay == 'h' && totals_array[0] <= 21  
 
-  else
+  if totals_array[0] <= 21
     while totals_array[1] < 17 # dealer's turn
       hit(hands[1], deck)
       totals_array = display_hands(hands, player_name, false)
     end
-
-    totals_array = display_hands(hands, player_name, false)
-    declare_winner(totals_array, player_name)
   end
+
+  totals_array = display_hands(hands, player_name, false)
+  declare_winner(totals_array, player_name, total_wins)
   puts
 end while keep_playing == 'y'
-
-
