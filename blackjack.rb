@@ -37,9 +37,7 @@ def hit_or_stay(hand, deck)
   puts "hit(H) or stay(S)?"
   print "=> "
   hit_or_stay = gets.chomp.downcase
-  if hit_or_stay == 'h'
-    hit!(hand, deck)
-  end
+  hit!(hand, deck) if hit_or_stay == 'h'
   hit_or_stay
 end
 
@@ -76,9 +74,7 @@ def total_for_hand(hand)
   total = calculate_total(hand)
   if total > 21
     ace = check_for_ace(hand)
-    if ace
-      total = calculate_total(hand)
-    end
+    total = calculate_total(hand) if ace
   end
   total
 end
@@ -125,9 +121,7 @@ def display_dealer_hand(hand, hole_card_hidden) #displays and returns total
     end    
   end
   total = total_for_hand(hand)
-  if !hole_card_hidden
-    print "total: #{total}"
-  end
+  print "total: #{total}" if !hole_card_hidden
   total
 end
 
@@ -146,9 +140,7 @@ total_wins = [0, 0]
 player_name = get_player_name
 
 begin
-  if deck.length <= 52 # minimum deck size before getting a new deck
-    deck = create_deck!
-  end
+  deck = create_deck! if deck.length <= 52 # minimum deck size before getting a new deck
   
   hands = deal_first_two_cards!([[], []], deck)
   totals_array = display_hands(hands, player_name, true)
