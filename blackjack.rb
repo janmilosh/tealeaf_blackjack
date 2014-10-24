@@ -1,13 +1,13 @@
 # encoding: utf-8
-require "pry"
 system "clear"
+NUMBER_OF_DECKS = 4
 
-def create_deck
+def create_deck!
   deck = []
   suites = ["\u2660", "\u2663", "\u2665", "\u2666"]
   card_ranks = %w(A K Q J 10 9 8 7 6 5 4 3 2)
   card_values = [11, 10, 10, 10, 10, 9, 8, 7, 6, 5, 4, 3, 2]
-  4.times do # to create 4 decks
+  NUMBER_OF_DECKS.times do
     4.times do |j| # to create the 4 suites
       13.times do |k| # to create the 13 values/ranks
         deck.push([card_values[k], card_ranks[k], suites[j]])
@@ -29,7 +29,7 @@ def keep_playing
   gets.chomp.downcase
 end
 
-def hit(hand, deck)
+def hit!(hand, deck)
   hand.push(deck.slice!(0))
 end
 
@@ -38,12 +38,12 @@ def hit_or_stay(hand, deck)
   print "=> "
   hit_or_stay = gets.chomp.downcase
   if hit_or_stay == 'h'
-    hit(hand, deck)
+    hit!(hand, deck)
   end
   hit_or_stay
 end
 
-def deal_first_two_cards(hands, deck)
+def deal_first_two_cards!(hands, deck)
   2.times do |i|
     2.times do |j|
       hands[i][j] = deck.slice!(1)
@@ -147,10 +147,10 @@ player_name = get_player_name
 
 begin
   if deck.length <= 52 # minimum deck size before getting a new deck
-    deck = create_deck
+    deck = create_deck!
   end
   
-  hands = deal_first_two_cards([[], []], deck)
+  hands = deal_first_two_cards!([[], []], deck)
   totals_array = display_hands(hands, player_name, true)
 
   begin # player's turn
@@ -160,7 +160,7 @@ begin
 
   if totals_array[0] <= 21
     while totals_array[1] < 17 # dealer's turn
-      hit(hands[1], deck)
+      hit!(hands[1], deck)
       totals_array = display_hands(hands, player_name, false)
     end
   end
